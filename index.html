@@ -208,15 +208,29 @@
     }
     .mapping-table td.row-label {
       background: #eef2f8;
-      font-weight: 600;
-      color: var(--primary);
-      padding: 10px 14px;
-      white-space: nowrap;
-      width: 80px;
+      width: 90px;
       vertical-align: middle;
       text-align: center;
-      font-size: 0.82rem;
+      padding: 6px 8px;
     }
+    .row-label-input {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-family: inherit;
+      direction: rtl;
+      text-align: center;
+      padding: 5px 6px;
+      outline: none;
+      cursor: text;
+      transition: border-color .2s, background .2s;
+    }
+    .row-label-input:hover { border-color: var(--border); background: #fff; }
+    .row-label-input:focus { border-color: var(--primary); background: #fff; }
     .mapping-table textarea {
       width: 100%;
       min-height: 80px;
@@ -691,21 +705,21 @@
           </thead>
           <tbody>
             <tr>
-              <td class="row-label">תהליך<br>1</td>
+              <td class="row-label"><input class="row-label-input" id="c1r1-label" value="תהליך 1" /></td>
               <td><textarea id="c1r1c1" placeholder="פעולות חוזרות, ניתוח נתונים..."></textarea></td>
               <td><textarea id="c1r1c2" placeholder="שיקול דעת, יחסים, קריאיטיביות..."></textarea></td>
               <td><textarea id="c1r1c3" placeholder="חיסכון בזמן, דיוק, מהירות..."></textarea></td>
               <td><textarea id="c1r1c4" placeholder="נתוני פרטיות, עלות הטמעה..."></textarea></td>
             </tr>
             <tr>
-              <td class="row-label">תהליך<br>2</td>
+              <td class="row-label"><input class="row-label-input" id="c1r2-label" value="תהליך 2" /></td>
               <td><textarea id="c1r2c1" placeholder=""></textarea></td>
               <td><textarea id="c1r2c2" placeholder=""></textarea></td>
               <td><textarea id="c1r2c3" placeholder=""></textarea></td>
               <td><textarea id="c1r2c4" placeholder=""></textarea></td>
             </tr>
             <tr>
-              <td class="row-label">תהליך<br>3</td>
+              <td class="row-label"><input class="row-label-input" id="c1r3-label" value="תהליך 3" /></td>
               <td><textarea id="c1r3c1" placeholder=""></textarea></td>
               <td><textarea id="c1r3c2" placeholder=""></textarea></td>
               <td><textarea id="c1r3c3" placeholder=""></textarea></td>
@@ -1065,6 +1079,7 @@ let { currentScreen, completed, skipped } = loadState();
 // FIELD IDS – for auto-save
 // ═══════════════════════════════════════════════════════════════
 const ALL_FIELDS = [
+  'c1r1-label','c1r2-label','c1r3-label',
   'c1r1c1','c1r1c2','c1r1c3','c1r1c4',
   'c1r2c1','c1r2c2','c1r2c3','c1r2c4',
   'c1r3c1','c1r3c2','c1r3c3','c1r3c4',
@@ -1088,7 +1103,8 @@ function restoreFieldValues() {
   ALL_FIELDS.forEach(id => {
     const saved = localStorage.getItem('field_' + id);
     const el = document.getElementById(id);
-    if (el && saved !== null) el.value = saved;
+    if (!el) return;
+    if (saved !== null && saved !== '') el.value = saved;
   });
 }
 
@@ -1232,7 +1248,7 @@ function buildPrintDoc() {
   // Card 1
   const c1rows = [1,2,3].map(r => `
     <tr>
-      <td style="background:#eef2f8;font-weight:700;padding:8px;width:70px;text-align:center;">תהליך ${r}</td>
+      <td style="background:#eef2f8;font-weight:700;padding:8px;width:70px;text-align:center;">${escape(fld('c1r'+r+'-label'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c1'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c2'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c3'))}</td>
