@@ -208,15 +208,29 @@
     }
     .mapping-table td.row-label {
       background: #eef2f8;
-      font-weight: 600;
-      color: var(--primary);
-      padding: 10px 14px;
-      white-space: nowrap;
-      width: 80px;
+      width: 90px;
       vertical-align: middle;
       text-align: center;
-      font-size: 0.82rem;
+      padding: 6px 8px;
     }
+    .row-label-input {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-family: inherit;
+      direction: rtl;
+      text-align: center;
+      padding: 5px 6px;
+      outline: none;
+      cursor: text;
+      transition: border-color .2s, background .2s;
+    }
+    .row-label-input:hover { border-color: var(--border); background: #fff; }
+    .row-label-input:focus { border-color: var(--primary); background: #fff; }
     .mapping-table textarea {
       width: 100%;
       min-height: 80px;
@@ -691,21 +705,21 @@
           </thead>
           <tbody>
             <tr>
-              <td class="row-label">תהליך<br>1</td>
+              <td class="row-label"><input class="row-label-input" id="c1r1-label" value="תהליך 1" /></td>
               <td><textarea id="c1r1c1" placeholder="פעולות חוזרות, ניתוח נתונים..."></textarea></td>
               <td><textarea id="c1r1c2" placeholder="שיקול דעת, יחסים, קריאיטיביות..."></textarea></td>
               <td><textarea id="c1r1c3" placeholder="חיסכון בזמן, דיוק, מהירות..."></textarea></td>
               <td><textarea id="c1r1c4" placeholder="נתוני פרטיות, עלות הטמעה..."></textarea></td>
             </tr>
             <tr>
-              <td class="row-label">תהליך<br>2</td>
+              <td class="row-label"><input class="row-label-input" id="c1r2-label" value="תהליך 2" /></td>
               <td><textarea id="c1r2c1" placeholder=""></textarea></td>
               <td><textarea id="c1r2c2" placeholder=""></textarea></td>
               <td><textarea id="c1r2c3" placeholder=""></textarea></td>
               <td><textarea id="c1r2c4" placeholder=""></textarea></td>
             </tr>
             <tr>
-              <td class="row-label">תהליך<br>3</td>
+              <td class="row-label"><input class="row-label-input" id="c1r3-label" value="תהליך 3" /></td>
               <td><textarea id="c1r3c1" placeholder=""></textarea></td>
               <td><textarea id="c1r3c2" placeholder=""></textarea></td>
               <td><textarea id="c1r3c3" placeholder=""></textarea></td>
@@ -966,7 +980,7 @@
         <h4>⭐ שאלת ההצלחה</h4>
         <p>ענו יחד על השאלה הבאה:</p>
         <p style="font-size:1rem;font-weight:700;color:#27ae60;margin-bottom:14px;">
-          "מה הסימן הראשון שאדע שהתקדמנו?"
+          &quot;מה הסימן הראשון שאדע שהתקדמנו?&quot;
         </p>
         <textarea id="success-sign" placeholder="רשמו כאן את הסימן הראשון להצלחה שהקבוצה מסכימה עליו..."></textarea>
       </div>
@@ -989,7 +1003,7 @@
       <div class="completion-title">כל הכבוד! סיימת את הפעילות</div>
       <div class="completion-body">
         השלמת את כל שלושת המיפויים האישיים ואת עבודת הקבוצה.<br>
-        כעת ניתן לייצא את הסיכום האישי שלך – זהו "המנהל לוקח הביתה" מהיום.
+        כעת ניתן לייצא את הסיכום האישי שלך – זהו &quot;המנהל לוקח הביתה&quot; מהיום.
       </div>
       <div class="export-buttons">
         <button class="btn btn-primary" onclick="exportPDF()" style="font-size:1rem;padding:14px 36px;">
@@ -1065,6 +1079,7 @@ let { currentScreen, completed, skipped } = loadState();
 // FIELD IDS – for auto-save
 // ═══════════════════════════════════════════════════════════════
 const ALL_FIELDS = [
+  'c1r1-label','c1r2-label','c1r3-label',
   'c1r1c1','c1r1c2','c1r1c3','c1r1c4',
   'c1r2c1','c1r2c2','c1r2c3','c1r2c4',
   'c1r3c1','c1r3c2','c1r3c3','c1r3c4',
@@ -1088,7 +1103,8 @@ function restoreFieldValues() {
   ALL_FIELDS.forEach(id => {
     const saved = localStorage.getItem('field_' + id);
     const el = document.getElementById(id);
-    if (el && saved !== null) el.value = saved;
+    if (!el) return;
+    if (saved !== null && saved !== '') el.value = saved;
   });
 }
 
@@ -1102,8 +1118,7 @@ function setupAutoSave() {
   ALL_FIELDS.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    const evType = el.tagName === 'TEXTAREA' ? 'input' : 'input';
-    el.addEventListener(evType, () => {
+    el.addEventListener('input', () => {
       localStorage.setItem('field_' + id, el.value);
     });
   });
@@ -1136,7 +1151,7 @@ function completeCard(n) {
 
 function goToGroupWork() {
   showScreen('screen-group');
-  document.getElementById('stage-badge').textContent = 'שלב ב׳ – עבודת קבוצה';
+  document.getElementById('stage-badge').textContent = 'שלב ב’ – עבודת קבוצה';
 }
 
 function completeGroupWork() {
@@ -1178,7 +1193,6 @@ function applySkip(key, isSkipped) {
 // PROGRESS BAR
 // ═══════════════════════════════════════════════════════════════
 function updateProgress() {
-  const screens = ['screen-1','screen-2','screen-3','screen-transition','screen-group','screen-complete'];
   const stepMap = {
     'screen-1': 1, 'screen-2': 2, 'screen-3': 3,
     'screen-transition': 3, 'screen-group': 4, 'screen-complete': 4
@@ -1200,7 +1214,6 @@ function updateProgress() {
     line.classList.toggle('done', i < current);
   }
 
-  // Hide progress on completion
   const isEnd = currentScreen === 'screen-complete';
   document.getElementById('progress-bar').style.opacity = isEnd ? '.4' : '1';
 }
@@ -1229,10 +1242,9 @@ function fld(id) {
 }
 
 function buildPrintDoc() {
-  // Card 1
   const c1rows = [1,2,3].map(r => `
     <tr>
-      <td style="background:#eef2f8;font-weight:700;padding:8px;width:70px;text-align:center;">תהליך ${r}</td>
+      <td style="background:#eef2f8;font-weight:700;padding:8px;width:70px;text-align:center;">${escape(fld('c1r'+r+'-label'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c1'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c2'))}</td>
       <td style="padding:8px;border:1px solid #ddd;">${escape(fld('c1r'+r+'c3'))}</td>
@@ -1250,7 +1262,6 @@ function buildPrintDoc() {
       <tbody>${c1rows}</tbody>
     </table>`;
 
-  // Card 2
   const quadItems = [
     { id: 'q-champion', label: '🌟 שגרירים (מוכנות גבוהה + נכונות גבוהה)' },
     { id: 'q-learner',  label: '📚 לומדים (מוכנות נמוכה + נכונות גבוהה)' },
@@ -1263,7 +1274,6 @@ function buildPrintDoc() {
       <span style="color:#555;">${escape(fld(q.id))}</span>
     </div>`).join('');
 
-  // Card 3
   const routines = [
     { id: 'rb-comm-text', label: '💬 שגרות תקשורת', key: 'comm' },
     { id: 'rb-mon-text',  label: '📊 ניטור וכלי מדידה', key: 'mon' },
@@ -1277,7 +1287,6 @@ function buildPrintDoc() {
     </div>`;
   }).join('');
 
-  // Stage B
   document.getElementById('print-stageb').innerHTML = `
     <div style="margin-bottom:10px;padding:12px;border:1px solid #ddd;border-radius:6px;">
       <strong>אתגרים ודילמות</strong><br/>
