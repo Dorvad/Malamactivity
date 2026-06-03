@@ -646,6 +646,11 @@
       <div class="step-dot" id="dot-3">3</div>
       <span class="step-label" id="lbl-3">שגרות ניהול</span>
     </div>
+    <div class="step-line" id="line-3"></div>
+    <div class="progress-step">
+      <div class="step-dot" id="dot-4">4</div>
+      <span class="step-label" id="lbl-4">כיווני פעולה</span>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════
@@ -870,7 +875,74 @@
           <button class="btn btn-ghost" onclick="goToCard(2)">‹ חזרה</button>
           <div class="save-status"><div class="save-dot"></div> נשמר אוטומטית</div>
         </div>
-        <button class="btn btn-success" onclick="completeCard(3)">✔ סיימתי ›</button>
+        <button class="btn btn-success" onclick="completeCard(3)">✔ סיימתי – קדימה לכיווני פעולה ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 4 – כיווני פעולה אישיים
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🎯</div>
+        <div>
+          <div class="card-title">כרטיסייה 4 | כיווני פעולה – מה אני לוקח מהיום?</div>
+          <div class="card-desc">סכם את האתגרים שעלו מהמיפוי האישי שלך והגדר כיווני פעולה קונקרטיים.</div>
+        </div>
+      </div>
+
+      <!-- Challenges -->
+      <h3 style="font-size:1rem;color:var(--primary);margin-bottom:10px;">💬 אתגרים ודילמות שעלו מהמיפוי שלי</h3>
+      <div class="challenges-area">
+        <textarea id="my-challenges" placeholder="רשמו את האתגרים המרכזיים, הדילמות, והשאלות שעלו מהמיפוי האישי שלך..."></textarea>
+      </div>
+
+      <!-- Action Directions -->
+      <div class="actions-grid">
+        <div class="action-col">
+          <h4>👤 פעולות שאני מתחייב לקחת</h4>
+          <div class="action-item">
+            <div class="action-num">1</div>
+            <input type="text" id="pa-1" placeholder="פעולה ראשונה שאני לוקח על עצמי..." />
+          </div>
+          <div class="action-item">
+            <div class="action-num">2</div>
+            <input type="text" id="pa-2" placeholder="פעולה שנייה שאני לוקח על עצמי..." />
+          </div>
+        </div>
+        <div class="action-col">
+          <h4>👥 פעולות שאקדם בצוותי</h4>
+          <div class="action-item">
+            <div class="action-num">1</div>
+            <input type="text" id="ta-1" placeholder="פעולה ראשונה שאקדם בצוות..." />
+          </div>
+          <div class="action-item">
+            <div class="action-num">2</div>
+            <input type="text" id="ta-2" placeholder="פעולה שנייה שאקדם בצוות..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Question -->
+      <div class="success-block">
+        <h4>⭐ שאלת ההצלחה</h4>
+        <p>ענה לעצמך על השאלה הבאה:</p>
+        <p style="font-size:1rem;font-weight:700;color:#27ae60;margin-bottom:14px;">
+          "מה הסימן הראשון שאדע שהתקדמתי?"
+        </p>
+        <textarea id="success-sign" placeholder="רשמו כאן את הסימן הראשון להצלחה שאתה מגדיר לעצמך..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button class="btn btn-ghost" onclick="goToCard(3)">‹ חזרה</button>
+          <div class="save-status"><div class="save-dot"></div> נשמר אוטומטית</div>
+        </div>
+        <button class="btn btn-success" onclick="completeCard(4)" style="font-size:1rem;padding:13px 32px;">
+          ✅ סיימתי – סיום ›
+        </button>
       </div>
     </div>
   </div>
@@ -883,7 +955,7 @@
       <div class="completion-icon">🏆</div>
       <div class="completion-title">כל הכבוד! סיימת את הפעילות</div>
       <div class="completion-body">
-        השלמת את כל שלושת המיפויים האישיים.<br>
+        השלמת את כל ארבע הכרטיסיות האישיות.<br>
         כעת ניתן לייצא את הסיכום האישי שלך – זהו "המנהל לוקח הביתה" מהיום.
       </div>
       <div class="export-buttons">
@@ -919,6 +991,9 @@
 
   <h3 style="font-size:11pt;margin-top:14px;margin-bottom:6px;">3. שגרות הניהול שלי</h3>
   <div id="print-card3"></div>
+
+  <h3 style="font-size:11pt;margin-top:14px;margin-bottom:6px;">4. כיווני פעולה</h3>
+  <div id="print-card4"></div>
 </div>
 
 <script>
@@ -929,7 +1004,7 @@ const STATE_KEY = 'workshop_state_v2';
 
 const defaultState = {
   currentScreen: 'screen-1',
-  completed: { card1: false, card2: false, card3: false },
+  completed: { card1: false, card2: false, card3: false, card4: false },
   skipped: { comm: false, mon: false, dec: false, dev: false }
 };
 
@@ -962,7 +1037,8 @@ const ALL_FIELDS = [
   'c1r2c1','c1r2c2','c1r2c3','c1r2c4',
   'c1r3c1','c1r3c2','c1r3c3','c1r3c4',
   'q-champion','q-learner','q-skeptic','q-resister',
-  'rb-comm-text','rb-mon-text','rb-dec-text','rb-dev-text'
+  'rb-comm-text','rb-mon-text','rb-dec-text','rb-dev-text',
+  'my-challenges','pa-1','pa-2','ta-1','ta-2','success-sign'
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -1024,7 +1100,8 @@ function completeCard(n) {
   saveState();
   if (n === 1) { showScreen('screen-2'); }
   else if (n === 2) { showScreen('screen-3'); }
-  else if (n === 3) { showScreen('screen-complete'); }
+  else if (n === 3) { showScreen('screen-4'); }
+  else if (n === 4) { showScreen('screen-complete'); }
 }
 
 
@@ -1061,11 +1138,11 @@ function applySkip(key, isSkipped) {
 // ═══════════════════════════════════════════════════════════════
 function updateProgress() {
   const stepMap = {
-    'screen-1': 1, 'screen-2': 2, 'screen-3': 3, 'screen-complete': 3
+    'screen-1': 1, 'screen-2': 2, 'screen-3': 3, 'screen-4': 4, 'screen-complete': 4
   };
   const current = stepMap[currentScreen] || 1;
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const dot = document.getElementById('dot-' + i);
     const lbl = document.getElementById('lbl-' + i);
     if (!dot) continue;
@@ -1074,7 +1151,7 @@ function updateProgress() {
     if (i < current) { dot.classList.add('done'); lbl.classList.add('done'); }
     else if (i === current) { dot.classList.add('active'); lbl.classList.add('active'); }
   }
-  for (let i = 1; i <= 2; i++) {
+  for (let i = 1; i <= 3; i++) {
     const line = document.getElementById('line-' + i);
     if (!line) continue;
     line.classList.toggle('done', i < current);
@@ -1157,6 +1234,28 @@ function buildPrintDoc() {
     </div>`;
   }).join('');
 
+  // Card 4
+  document.getElementById('print-card4').innerHTML = `
+    <div style="margin-bottom:10px;padding:12px;border:1px solid #ddd;border-radius:6px;">
+      <strong>אתגרים ודילמות שעלו מהמיפוי</strong><br/>
+      <span style="color:#555;">${escape(fld('my-challenges'))}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+      <div style="padding:12px;border:1px solid #ddd;border-radius:6px;">
+        <strong>👤 פעולות שאני לוקח על עצמי</strong><br/>
+        1. ${escape(fld('pa-1'))}<br/>
+        2. ${escape(fld('pa-2'))}
+      </div>
+      <div style="padding:12px;border:1px solid #ddd;border-radius:6px;">
+        <strong>👥 פעולות שאקדם בצוותי</strong><br/>
+        1. ${escape(fld('ta-1'))}<br/>
+        2. ${escape(fld('ta-2'))}
+      </div>
+    </div>
+    <div style="padding:14px;border:2px solid #27ae60;border-radius:6px;background:#f0fdf4;">
+      <strong>⭐ סימן הצלחה ראשון</strong><br/>
+      <span style="color:#27ae60;font-weight:600;">${escape(fld('success-sign'))}</span>
+    </div>`;
 }
 
 function escape(str) {
